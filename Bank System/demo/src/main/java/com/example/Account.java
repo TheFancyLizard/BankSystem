@@ -42,7 +42,7 @@ public class Account {
     }
     
     public boolean setPin(String pin){
-        if ((String.valueOf(pin).length() == 4)){
+        if (String.valueOf(pin).length() == 4){
             this.pin = pin;
             return true;
         }

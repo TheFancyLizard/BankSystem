@@ -35,10 +35,16 @@ public class Main {
         String nome = leitor.nextLine();
         System.out.print("Insira a renda do usuário da conta: ");
         double renda = leitor.nextDouble();
-        leitor.nextLine();
-        System.out.print("Insira o CPF para o usuário da conta: ");
-        String cpf = leitor.nextLine();
-        return new User(nome, renda, cpf);
+        if (renda >= 0){
+            leitor.nextLine();
+            System.out.print("Insira o CPF para o usuário da conta: ");
+            String cpf = leitor.nextLine();
+            return new User(nome, renda, cpf);
+        }
+        else{
+            System.out.printf(RED_STRING+"%nValor de renda inválido! (não pode ser negativo)"+RESET_STRING);
+            return null;
+        }
     }
     public static User[] addUser(User user, User[] listaDeUsuarios){
         if(listaDeUsuarios == null){
@@ -119,83 +125,75 @@ public class Main {
     
     public static void main(String[] args) {
         Scanner leitor = new Scanner(System.in);
+        OUTER:
         while (true) {
-            System.out.printf("%nMENU%n1 - Registrar Usuário%n2 - Registrar Conta%n3 - Observar Transações%n4 - Realizar Transação%n5 - Fechar%n: ");
+            System.out.printf("%nMENU%n1 - Registrar Usuário%n2 - Registrar Conta%n3 - Observar Transações%n4 - Realizar Transação%n5 - Ver Balanço%n6 - Fechar%n: ");
             String input = leitor.nextLine();
-            if(input.equals("5")){
-                break;
-            }
-            else if (input.equals("1")){
-                User usuario = RegisterUser(leitor);
-                listaDeUsuarios = addUser(usuario, listaDeUsuarios);
-            }
-            else if(input.equals("2")){
-                if(listaDeUsuarios!= null){
-                    Account conta = RegisterAccount(listaDeUsuarios, leitor);
-                    if(conta != null){
-                        listaDeContas = AddAccount(conta, listaDeContas);
+            System.out.print("\033[H\033[2J");
+            System.out.flush();
+            switch (input) {
+                case "6" -> {
+                    break OUTER;
+                }
+                case "1" -> {
+                    User usuario = RegisterUser(leitor);
+                    if (usuario!=null){
+                        listaDeUsuarios = addUser(usuario, listaDeUsuarios);
                     }
                 }
-                else{
-                    System.out.printf("%nNenhum usuário registrado!%n");
+                case "2" -> {
+                    if(listaDeUsuarios!= null){
+                        Account conta = RegisterAccount(listaDeUsuarios, leitor);
+                        if(conta != null){
+                            listaDeContas = AddAccount(conta, listaDeContas);
+                            conta.ReceivePay();
+                        }
+                    }
+                    else{
+                        System.out.printf("%nNenhum usuário registrado!%n");
+                    }
                 }
-            }
-            else if(input.equals("3")){
-                if (listaDeContas!=null){
+                case "3" -> {
+                    if (listaDeContas!=null){
+                        Account conta = FindAccount(listaDeContas, leitor);
+                        if (conta!= null){
+                            conta.DisplayAllAccountTransactions();
+                        }
+                    }
+                    else{
+                        System.out.printf("%nNenhuma conta registrada!%n");
+                    }
+                }
+                case "4" -> {
+                    System.out.printf("%nConta que pagará: %n");
                     Account conta = FindAccount(listaDeContas, leitor);
-                    if (conta!= null){
-                        conta.DisplayAllAccountTransactions();
+                    if(conta != null){
+                        System.out.printf("Qual o valor que deseja transferir da conta de %s: ",conta.getUser().getName());
+                        double valor = leitor.nextDouble();
+                        System.out.printf("%nConta que receberá: %n");
+                        leitor.nextLine();
+                        Account conta2 = FindAccount(listaDeContas, leitor);
+                        if(conta2 != null){
+                            System.out.printf("%nInforme o PIN da conta que pagará: ");
+                            String pin = leitor.next();
+                            Transacionar(conta, valor, conta2, pin);
+                        }
                     }
                 }
-                else{
-                    System.out.printf("%nNenhuma conta registrada!%n");
-                }
-            }
-            else if (input.equals("4")){
-                System.out.printf("%nConta que pagará: %n");
-                Account conta = FindAccount(listaDeContas, leitor);
-                if(conta != null){
-                    System.out.printf("Qual o valor que deseja transferir da conta de %s: ",conta.getUser().getName());
-                    double valor = leitor.nextDouble();
-                    System.out.printf("%nConta que receberá: %n");
-                    leitor.nextLine();
-                    Account conta2 = FindAccount(listaDeContas, leitor);
-                    if(conta2 != null){
-                        System.out.printf("%nInforme o PIN da conta que pagará: ");
-                        String pin = leitor.next();
-                        Transacionar(conta, valor, conta2, pin);
+                case "5" -> {
+                    if (listaDeContas!=null){
+                        Account conta = FindAccount(listaDeContas, leitor);
+                        if (conta != null){
+                            conta.getBalance();
+                        }
+                    }
+                    else{
+                        System.out.printf("%nNenhuma conta registrada!%n");
                     }
                 }
-            }
-            else{
-                System.out.printf("%nValor não foi reconhecido%n");
+                default -> System.out.printf("%nValor não foi reconhecido%n");
             }
         }
-        /* 
-        
-            conta.ReceivePay();
-            Escrever(""+conta.getUser().getName() +": R$"+ conta.getBalance() +", CPF: " + usuario.getCPF());
-            
-            
-            conta2.ReceivePay();
-            Escrever(""+conta2.getUser().getName() +": R$"+conta2.getBalance()+", CPF:"+usuario2.getCPF());
-                
-            
-            Transacionar(conta, 150, conta2, "0000");
-            Transacionar(conta2, 300.60, conta, "0111");
-            Transacionar(conta2, 10000, conta, "1111");
-            
-            conta.DisplayAllAccountTransactions();
-            conta2.DisplayAllAccountTransactions();
-            
-            System.out.println(conta2.getBalance());
-            
-            for (int i = 0; i<listaDeUsuarios.length; i++){
-                System.out.println(listaDeUsuarios[i].getName());
-            }
-            
-        
-        */
         leitor.close();
     }
 }

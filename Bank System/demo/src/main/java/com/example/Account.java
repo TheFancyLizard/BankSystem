@@ -116,7 +116,7 @@ public class Account {
                 System.out.println(" Para "+getTransactionsOut()[i].getReceiver().getUser().getName());
                 total += getTransactionsOut()[i].getAmmount();
             }
-            System.out.printf("%nTotal pago: %f.2", total);
+            System.out.printf("%nTotal pago: %.2f%n", total);
         }
         else{
             System.out.printf("%nNenhum pagamento efetuado.%n");
@@ -131,7 +131,7 @@ public class Account {
                 System.out.printf(getTransactionsIn()[i].getPayer().getUser().getName()+"%n");
                 total += getTransactionsIn()[i].getAmmount();
             }
-            System.out.printf("%nTotal Recebido: %f.2", total);
+            System.out.printf("%nTotal Recebido: %.2f%n", total);
         }
         else{
             System.out.printf("%nNenhum valor recebido.%n");

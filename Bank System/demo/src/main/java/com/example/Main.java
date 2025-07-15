@@ -45,12 +45,14 @@ public class Main {
             User[] newArray = new User[1];
             newArray[0] = user;
             listaDeUsuarios = newArray;
+            System.out.printf(GREEN_STRING+"%nUsuário registrado!%n"+RESET_STRING);
             return listaDeUsuarios;
         }
         else{
             User[] newArray = Arrays.copyOf(listaDeUsuarios, listaDeUsuarios.length+1);
             newArray[newArray.length-1] = user;
             listaDeUsuarios = newArray;
+            System.out.printf("%nUsuário registrado!%n");
             return listaDeUsuarios;
         }
     }
@@ -77,12 +79,12 @@ public class Main {
                 return new Account(usuario, pin);
             }
             else{
-                System.out.printf("%nConta não pode ser criada.%n");
+                System.out.printf(RED_STRING+"%nConta não pode ser criada.%n"+RESET_STRING);
                 return null;
             }
         }
         else{
-            System.out.printf("%nUsuário não encontrado.%n");
+            System.out.printf(RED_STRING+"%nUsuário não encontrado.%n"+RESET_STRING);
             return null;
         }
 
@@ -92,12 +94,14 @@ public class Main {
             Account[] newArray = new Account[1];
             newArray[0] = conta;
             listaDeContas = newArray;
+            System.out.printf(GREEN_STRING+"%nConta de %s registrada!%n"+RESET_STRING,conta.getUser().getName());
             return listaDeContas;
         }
         else{
             Account[] newArray = Arrays.copyOf(listaDeContas, listaDeContas.length+1);
             newArray[newArray.length-1] = conta;
             listaDeContas = newArray;
+            System.out.printf("%nConta de %s registrada!%n",conta.getUser().getName());
             return listaDeContas;
         }
     }
@@ -116,16 +120,21 @@ public class Main {
     public static void main(String[] args) {
         Scanner leitor = new Scanner(System.in);
         while (true) {
-            System.out.printf("%nMENU%n1 - Registrar Usuário%n2 - Registrar Conta%n3 - Observar Transações%n4 - Fechar%n: ");
+            System.out.printf("%nMENU%n1 - Registrar Usuário%n2 - Registrar Conta%n3 - Observar Transações%n4 - Realizar Transação%n5 - Fechar%n: ");
             String input = leitor.nextLine();
-            if (input.equals("1")){
+            if(input.equals("5")){
+                break;
+            }
+            else if (input.equals("1")){
                 User usuario = RegisterUser(leitor);
                 listaDeUsuarios = addUser(usuario, listaDeUsuarios);
             }
             else if(input.equals("2")){
                 if(listaDeUsuarios!= null){
                     Account conta = RegisterAccount(listaDeUsuarios, leitor);
-                    listaDeContas = AddAccount(conta, listaDeContas);
+                    if(conta != null){
+                        listaDeContas = AddAccount(conta, listaDeContas);
+                    }
                 }
                 else{
                     System.out.printf("%nNenhum usuário registrado!%n");
@@ -142,20 +151,28 @@ public class Main {
                     System.out.printf("%nNenhuma conta registrada!%n");
                 }
             }
-            else if(input.equals("4")){
-                break;
+            else if (input.equals("4")){
+                System.out.printf("%nConta que pagará: %n");
+                Account conta = FindAccount(listaDeContas, leitor);
+                if(conta != null){
+                    System.out.printf("Qual o valor que deseja transferir da conta de %s: ",conta.getUser().getName());
+                    double valor = leitor.nextDouble();
+                    System.out.printf("%nConta que receberá: %n");
+                    leitor.nextLine();
+                    Account conta2 = FindAccount(listaDeContas, leitor);
+                    if(conta2 != null){
+                        System.out.printf("%nInforme o PIN da conta que pagará: ");
+                        String pin = leitor.next();
+                        Transacionar(conta, valor, conta2, pin);
+                    }
+                }
             }
             else{
                 System.out.printf("%nValor não foi reconhecido%n");
             }
         }
         /* 
-        User usuario2 = new User("Roberto Burnham", 4000.00, "000.111.000.11");
-        listaDeUsuarios = addUser(usuario2, listaDeUsuarios);
         
-        Account conta2 = RegisterAccount(usuario2, leitor);
-            
-        if(conta != null && conta2 != null){
             conta.ReceivePay();
             Escrever(""+conta.getUser().getName() +": R$"+ conta.getBalance() +", CPF: " + usuario.getCPF());
             
@@ -177,7 +194,7 @@ public class Main {
                 System.out.println(listaDeUsuarios[i].getName());
             }
             
-        }
+        
         */
         leitor.close();
     }

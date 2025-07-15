@@ -109,23 +109,29 @@ public class Account {
 
     public void DisplayAccountTransactionsOut(){
         if (getTransactionOutAmmounts()>0){
+            double total = 0;
             System.out.printf("%nPagamentos:%n");
             for(int i=0;i<getTransactionOutAmmounts();i++){
                 System.out.printf("%.2f",getTransactionsOut()[i].getAmmount());
                 System.out.println(" Para "+getTransactionsOut()[i].getReceiver().getUser().getName());
+                total += getTransactionsOut()[i].getAmmount();
             }
+            System.out.printf("%nTotal pago: %f.2", total);
         }
         else{
-            System.out.printf("%nNenhuma transação efetuada.%n");
+            System.out.printf("%nNenhum pagamento efetuado.%n");
         }
     }
     public  void DisplayAccountTransactionsIn(){
         if (getTransactionInAmmounts()>0){
+            double total = 0;
             System.out.printf("%nRecebimentos:%n");
             for(int i=0;i<getTransactionInAmmounts();i++){
                 System.out.printf("%.2f de ",getTransactionsIn()[i].getAmmount());
                 System.out.printf(getTransactionsIn()[i].getPayer().getUser().getName()+"%n");
+                total += getTransactionsIn()[i].getAmmount();
             }
+            System.out.printf("%nTotal Recebido: %f.2", total);
         }
         else{
             System.out.printf("%nNenhum valor recebido.%n");
